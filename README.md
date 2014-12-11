@@ -12,3 +12,7 @@ The Babbling Brook uses the following APIs:
 Database
 ----------------
 * MongoDB - http://docs.mongodb.org/manual/installation/
+
+Setup
+----------------
+* Set up cron job to run saveWeatherData.sh every 15 minutes (see HANDY_SNIPPETS for syntax)

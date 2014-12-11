@@ -29,3 +29,7 @@ db.createUser(
       ]
     }
 )
+
+SETUP CRON JOB
+sudo nano crontab -e
+0,15,30,45 * * * * path/to/saveWeatherData.sh
