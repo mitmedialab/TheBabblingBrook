@@ -1,0 +1,11 @@
+[api]
+wunderground_key:
+
+
+[db]
+host: 
+user: 
+pass: 
+name: babbling_brook
+port: 27017
+auth_db:babbling_brook

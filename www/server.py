@@ -1,9 +1,8 @@
 import os
 import ConfigParser
-from pymongo import MongoClient 
 import requests
 from flask import Flask
-
+from pymongo import MongoClient 
 app = Flask(__name__)
 app.debug = True
 
@@ -18,9 +17,10 @@ config.read(os.path.join(BASE_DIR,CONFIG_FILENAME))
 
 # MongoDB & links to each collection
 uri = "mongodb://"+ config.get('db','user')+ ":"+ config.get('db','pass')+"@" +config.get('db','host') + ":" + config.get('db','port')+"/?authSource="+config.get('db','auth_db')
+print uri
 db_client = MongoClient(uri)
 app.db = db_client[config.get('db','name')]
-#app.db_weather_collection = app.db[config.get('db','weather_collection')]
+app.db_weather_collection = app.db[config.get('db','weather_collection')]
 
 @app.route('/')
 def hello_world():
@@ -31,9 +31,9 @@ def hello_world():
 @app.route('/saveWeatherData')
 def save_weather_data():
 	url = 'http://api.wunderground.com/api/' + config.get('api','wunderground_key') + '/conditions/q/MA/Plymouth.json'
-	response = requests.get(url).content
-	app.db.weather_collection.insert([response])
-	return requests.get(url).content
+	response = requests.get(url)
+	app.db.weather_collection.insert(response.json())
+	return response.content
 
 if __name__ == '__main__':
     app.run()

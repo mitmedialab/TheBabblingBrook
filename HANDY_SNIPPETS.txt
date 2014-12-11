@@ -1,0 +1,31 @@
+Start up virtual environment from command line
+. venv/bin/activate (see http://flask.pocoo.org/docs/0.10/installation/#installation for more info)
+
+
+Create babbling_brook DB in mongo client
+use babbling_brook
+
+
+Set up siteAdmin user in local MongoDB
+use admin
+db.createUser(
+  {
+    user: "siteUserAdmin",
+    pwd: "babbler",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+
+Then connect as that user: 
+mongo --port 27017 -u siteUserAdmin -p babbler --authenticationDatabase admin
+
+Create User role for accessing DB:
+db.createUser(
+    {
+      user: "babbleUser",
+      pwd: "12345678",
+      roles: [
+         { role: "readWrite", db: "babbling_brook" }
+      ]
+    }
+)
