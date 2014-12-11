@@ -8,3 +8,7 @@ APIS
 The Babbling Brook uses the following APIs:
 * Wunderground Weather API - http://www.wunderground.com/weather/api/d/docs
 * TTS API - http://tts-api.com/
+
+Database
+----------------
+* MongoDB - http://docs.mongodb.org/manual/installation/
