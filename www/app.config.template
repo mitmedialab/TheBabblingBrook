@@ -9,3 +9,5 @@ pass:
 name: babbling_brook
 port: 27017
 auth_db:babbling_brook
+weather_collection:weather
+jokes_collection:jokes

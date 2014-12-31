@@ -33,3 +33,13 @@ db.createUser(
 SETUP CRON JOB
 sudo nano crontab -e
 0,15,30,45 * * * * path/to/saveWeatherData.sh
+
+LINK FOR MAC CRONS: http://stackoverflow.com/questions/15395479/using-cron-on-mac-osx-mountain-lion 
+
+START RASPBERRY PI ON MAC
+screen /dev/cu.PL2303-00002014 115200
+
+password:raspberry
+username:pi
+
+See RaspberryPi's Internet config: ifconfig
