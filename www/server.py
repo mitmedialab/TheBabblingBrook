@@ -54,7 +54,8 @@ def tell_a_joke():
 
 		# Joke Logic - TBD Better. Only working on temp at the moment. 
 		temp = float(result["current_observation"]["temp_f"])
-		jokes = app.db.jokes_collection.find({ "$or" : [{"conditions.temp_f.is_greater_than" : {"$lt":temp}}, {"conditions.temp_f.is_less_than" : {"$gt":temp}}, {"conditions.temp_f.is_equal_to" : {"$eq":temp}} ]},{"joke":1})
+		#jokes = app.db.jokes_collection.find({ "$or" : [{"conditions.temp_f.is_greater_than" : {"$lt":temp}}, {"conditions.temp_f.is_less_than" : {"$gt":temp}}, {"conditions.temp_f.is_equal_to" : {"$eq":temp}} ]},{"joke":1})
+		jokes = app.db.jokes_collection.find({ "$or" : [{"conditions.temp_f.is_greater_than" : {"$lt":temp}}, {"conditions.temp_f.is_less_than" : {"$gt":temp}} ]},{"joke":1})
 
 		if jokes.count() == 0:
 			joke = "hey there is no joke here because the developer is not very funny. Hahahahahaha."	
