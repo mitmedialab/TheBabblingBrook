@@ -40,6 +40,17 @@ def save_weather_data():
 	app.db.weather_collection.insert(response.json())
 	return response.content
 
+
+@app.route('/saveSensorData')
+def save_sensor_data():
+	content = request.get_json()
+	if content is not None:
+		app.db.weather_collection.insert(content)
+		return "OK"
+	else:
+		return "Error: Your post needs to be formatted as JSON and the Content Type needs to be 'json'"
+
+
 # Grabs latest data from DB and tells a joke
 # TODO: save the mp3 file to our server so we can reload without going to the API
 @app.route('/tellAJoke')
