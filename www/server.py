@@ -28,7 +28,7 @@ app.db_jokes_collection = app.db[config.get('db','jokes_collection')]
 
 @app.route('/')
 def hello_world():
-    return 'Hello I am the future home of The Babbling Brook! Funniness to come.'
+    return 'Hello I am the future home of The Babbling Brook Jokes API! Funniness to come.'
 
 # Will query the Wunderground API for all the locations we need (Tidmarsh & MIT to start) and save each reading to the MongoDB
 # This will be called from a cron job that runs every 15 minutes

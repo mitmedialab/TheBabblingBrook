@@ -43,3 +43,21 @@ password:raspberry
 username:pi
 
 See RaspberryPi's Internet config: ifconfig
+
+
+WORKING WITH PYTHON VIRTUAL ENV
+-----------------------------------------------------
+sudo pip install virtualenv
+virtualenv venv
+
+ACTIVATE: source venv/bin/activate
+DEACTIVATE: deactivate
+
+DEPLOY CHANGES TO civicdev
+-----------------------------------------------------
+sudo git fetch --all
+sudo git reset --hard origin/master
+
+APACHE
+-----------------------------------------------------
+sudo /etc/init.d/apache2 reload
