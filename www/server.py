@@ -77,10 +77,16 @@ def tell_a_joke():
 		audio_html = '<audio controls autoplay><source src="'+ response.content +'" type="audio/mpeg">Your browser does not support the audio element.</audio>'
 
 		# Dump raw data so we can verify it's working
-		json = dumps(result,sort_keys=True, indent=4)
+		r = {}
+		r["audio_url"] = response.content
+		r["joke"] = joke
+		r["current_observation"] = {}
+		r["current_observation"]["temp_f"]=temp
+		json = dumps(r,sort_keys=True, indent=4)
 
 		# Return all that
-		return audio_html + "<h1>"+joke+"</h1> <pre style=\"white-space: pre-wrap;\">" + json + "</pre>"
+		#return audio_html + "<h1>"+joke+"</h1> <pre style=\"white-space: pre-wrap;\">" + json + "</pre>"
+		return json
 
 # Interface to input new jokes based on conditional parameters
 @app.route('/writeAJoke', methods=['GET', 'POST'])
