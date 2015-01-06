@@ -40,7 +40,7 @@ def save_weather_data():
 	app.db.weather_collection.insert(response.json())
 	return response.content
 
-
+# Saves sensor data posted to the DB, make sure you send with Content-Type: json
 @app.route('/saveSensorData')
 def save_sensor_data():
 	content = request.get_json()
@@ -108,6 +108,11 @@ def write_a_joke():
 		isGreaterThan = request.form['is_greater_than']
 		variableValue = request.form['variable_value']
 		joke = request.form['joke']
+
+		#todo - make this more robust, use regex
+		joke = joke.replace("((temperature))",variableValue)
+		joke = joke.replace("((windspeed))",variableValue)
+
 		error_message = ""
 		if variableValue == None or variableValue == "":
 			error_message = "Need to specify a value"

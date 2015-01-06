@@ -22,7 +22,7 @@
 
       <div class="starter-template">
         <h1>What is funnier than environmental data? Write your joke here!</h1>
-        <p class="lead">Specify temperature value in degrees fahrenheit and wind speed in mph.</p>
+        <p class="lead">Specify temperature value in degrees fahrenheit and wind speed in mph. If you want to reference the temperature in your joke, put ((temperature)) or ((windspeed)).</p>
         <p class="lead" style="color:red">{{error_message}}</p>
         {% if error_message != NONE and error_message == "" %}
 			<p class="lead">Joke Saved! <a href="/writeAJoke">Write a new one?</a></p>
