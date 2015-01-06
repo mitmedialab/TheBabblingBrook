@@ -19,8 +19,8 @@ config = ConfigParser.ConfigParser()
 config.read(os.path.join(BASE_DIR,CONFIG_FILENAME))
 
 # MongoDB & links to each collection
-uri = "mongodb://"+ config.get('db','user')+ ":"+ config.get('db','pass')+"@" +config.get('db','host') + ":" + config.get('db','port')+"/?authSource="+config.get('db','auth_db')
-print uri
+#uri = "mongodb://"+ config.get('db','user')+ ":"+ config.get('db','pass')+"@" +config.get('db','host') + ":" + config.get('db','port')+"/?authSource="+config.get('db','auth_db')
+uri = "mongodb://"+config.get('db','host')+":"+ config.get('db','port')
 db_client = MongoClient(uri)
 app.db = db_client[config.get('db','name')]
 app.db_weather_collection = app.db[config.get('db','weather_collection')]
