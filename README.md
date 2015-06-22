@@ -3,6 +3,13 @@ TheBabblingBrook
 
 A talking flower. The beginning of a Environmental Jokes API. 
 
+PYTHON Libraries
+----------------
+* requests
+* Flask
+* PyMongo
+
+
 APIS
 ----------------
 The Babbling Brook uses the following APIs:

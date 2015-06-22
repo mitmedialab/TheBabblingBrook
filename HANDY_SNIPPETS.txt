@@ -1,6 +1,12 @@
-Start up virtual environment from command line
-. venv/bin/activate (see http://flask.pocoo.org/docs/0.10/installation/#installation for more info)
+WORKING WITH PYTHON VIRTUAL ENV
+-----------------------------------------------------
+sudo pip install virtualenv
+virtualenv venv
 
+ACTIVATE: source venv/bin/activate
+DEACTIVATE: deactivate
+
+-----------------------------------------------------
 
 Create babbling_brook DB in mongo client
 use babbling_brook
@@ -52,6 +58,14 @@ virtualenv venv
 
 ACTIVATE: source venv/bin/activate
 DEACTIVATE: deactivate
+
+
+AFTER VIRTUAL ENV IS INSTALLED 
+-----------------------------------------------------
+pip install requests
+pip install pymongo
+pip install flask
+pip install ConfigParser
 
 DEPLOY CHANGES TO civicdev
 -----------------------------------------------------

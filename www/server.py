@@ -2,9 +2,14 @@ import os
 import ConfigParser
 import requests
 from bson.json_util import dumps
+from bson.objectid import ObjectId
+from bson import BSON
+from bson import json_util
 from flask import Flask,render_template,request
 from pymongo import MongoClient 
 from random import randint
+import json
+
 
 app = Flask(__name__)
 app.debug = True
@@ -129,6 +134,38 @@ def write_a_joke():
 		return render_template('writeAJoke.html', joke=joke, variable=variable, is_greater_than=isGreaterThan,variable_value=variableValue, error_message=error_message)
 	else: 
 		return render_template('writeAJoke.html')
+
+# JSON data dump based on parameter OR parameters of interest
+# create list 
+# visualize a parameter of interest
+# pull all of those and graph them with googlecharts
+# return timestamp and list of parameters, 1-n, that have TEMP AND HUMIDITY
+@app.route('/dataDump', methods=['GET', 'POST'])
+def datadump():
+	result=[]
+	listOfParams = request.args.get("listOfParams")
+	if listOfParams is None:
+		return "ERROR: Send me the variable 'listOfParams' with the names of variables of interest. If you need to see names of variables of interest check here: /saveWeatherData. Don't send current_observation.temp_f, just send temp_f"
+	else: 
+		theList = listOfParams.split(",")
+		firstThing = theList[0]
+
+		query = 
+
+		q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",1)])
+		
+		for row in q:
+			result.append(row)
+	return json.dumps(result, sort_keys=True, indent=4, default=json_util.default)
+
+@app.route('/datavizGrid', methods=['GET', 'POST'])
+def visualize():
+	# pull out data we want to  see
+	# format it for google
+	# send to google
+	# print response 
+	# google charts and print out a grid of temp, conductivity etc over the last x period of time
+	hi = "hi"
 
 if __name__ == '__main__':
     app.run()
