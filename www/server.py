@@ -46,7 +46,7 @@ def save_weather_data():
 	return response.content
 
 # Saves sensor data posted to the DB, make sure you send with Content-Type: json
-@app.route('/saveSensorData')
+@app.route('/saveSensorData', methods=['GET', 'POST'])
 def save_sensor_data():
 	content = request.get_json()
 	if content is not None:
