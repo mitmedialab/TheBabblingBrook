@@ -150,8 +150,6 @@ def datadump():
 		theList = listOfParams.split(",")
 		firstThing = theList[0]
 
-		query = 
-
 		q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",1)])
 		
 		for row in q:
