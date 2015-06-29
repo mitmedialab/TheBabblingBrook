@@ -148,6 +148,11 @@ def write_a_joke():
 def datadump():
 	result=[]
 	listOfParams = request.args.get("listOfParams")
+	sort = request.args.get("sort")
+	if sort is None:
+		sort = -1
+	else:
+		sort = int(sort)
 	if listOfParams is None:
 		return "ERROR: Send me the variable 'listOfParams' with the names of variables of interest. If you need to see names of variables of interest check here: /saveWeatherData. Don't send current_observation.temp_f, just send temp_f"
 	else: 
@@ -156,7 +161,7 @@ def datadump():
 
 		if numItems == 1:
 			firstThing = theList[0]
-			q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",1)])
+			q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",sort)])
 		else: 
 			query = []
 			fieldList = {}	
@@ -166,7 +171,7 @@ def datadump():
 				query.append({item : {'$exists':'true'} })
 				fieldList[item]= 1
 
-			q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.observation_epoch",1)])
+			q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.observation_epoch",sort)])
 		for row in q:
 			result.append(row)
 	return json.dumps(result, sort_keys=True, indent=4, default=json_util.default)
