@@ -33,7 +33,7 @@ app.db_jokes_collection = app.db[config.get('db','jokes_collection')]
 
 @app.route('/')
 def hello_world():
-    return 'Hello I am the future home of The Babbling Brook Jokes API! Funniness to come.'
+    return render_template('index.html')
 
 # Will query the Wunderground API for all the locations we need (Tidmarsh & MIT to start) and save each reading to the MongoDB
 # This will be called from a cron job that runs every 15 minutes
@@ -46,7 +46,8 @@ def save_weather_data():
 	return response.content
 
 # Saves sensor data posted to the DB, make sure you send with Content-Type: json
-@app.route('/saveSensorData', methods=['GET', 'POST'])
+# TODO SEE WY POST ISNT WORKING
+@app.route('/saveSingleObservation', methods=['GET', 'POST'])
 def save_sensor_data():
 	content = request.get_json()
 	if content is not None:
@@ -55,9 +56,12 @@ def save_sensor_data():
 	else:
 		return "Error: Your post needs to be formatted as JSON and the Content Type needs to be 'json'"
 
+#TODO
+@app.route('/saveMultipleObservations', methods=['GET', 'POST'])
+def save_multiple_sensor_data():
+	# parse out stuff and saveSingleObservation
+	hi = "hi"
 
-# Grabs latest data from DB and tells a joke
-# TODO: save the mp3 file to our server so we can reload without going to the API
 @app.route('/tellAJoke')
 def tell_a_joke():
 	
