@@ -171,6 +171,7 @@ def datadump():
 				query.append({item : {'$exists':'true'} })
 				fieldList[item]= 1
 
+			print fieldList	
 			q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.observation_epoch",sort)])
 		for row in q:
 			result.append(row)
