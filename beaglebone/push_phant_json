@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+"""  OPK push skeleton model code for Python.
+     Here are some test results:
+     $ echo '{"temperature":1.0,"conductivity":2.0,"depth":3.0}' | ./push_phant_json -v
+     LOADED JSON DATA: OrderedDict([(u'temperature', 1.0), (u'conductivity', 2.0), (u'depth', 3.0)])
+     POSTING: https://data.sparkfun.com/input/jqERJOgdYKuyw09Zm8xb?private_key=XXXXXXXXXXXXXXXXXXXX&temperature=1.0&conductivity=2.0&depth=3.0
+     RESPONSE: <addinfourl at 139956652527344 whose fp = <socket._fileobject object at 0x7f4a3371cf50>>
+"""
+import sys, os, argparse, glob, json, urllib2
+from collections import OrderedDict
+
+LOGFILE     = sys.stderr
+IN_STREAM   = sys.stdin
+OUT_STREAM  = sys.stdout
+
+
+PHANT_KEYS_FILE_PATTERN = "keys_*.json"
+
+# parse the command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-k","--keysfile", help="phant keys file")
+parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
+
+args = parser.parse_args()
+
+#-------------------------------------------------------------------------------
+# configure Phant stream
+keys_filepath = args.keysfile
+if keys_filepath is None:
+    #match the most recent keys file
+    fns = glob.glob(PHANT_KEYS_FILE_PATTERN)
+    ctime_fns = [(os.path.getctime(fn),fn) for fn in fns]
+    ctime_fns.sort()
+    try:
+        keys_filepath = ctime_fns[-1][1]
+    except IndexError:
+        LOGFILE.write("ERROR: either argument '-k, --keysfile' must be specified or a file matching pattern '%s' must be present" % PHANT_KEYS_FILE_PATTERN)
+
+#load the keys file
+keys_file = open(keys_filepath,'r')
+keys_info = json.load(keys_file)
+#FIXME a hack to make URLs "secure"
+import re
+re_http = re.compile("^http[:]")
+keys_info['inputUrl'] = re_http.sub("https:", keys_info['inputUrl'])
+#keys_info['manageUrl'] = re_http.sub("https:", keys_info['manageUrl'])
+#keys_info['outputUrl'] = re_http.sub("https:", keys_info['outputUrl'])
+
+# process the input
+try:
+    #decode into and ordered dictionary, assuming JSON document
+    data = json.load(IN_STREAM, object_pairs_hook = OrderedDict)
+    if args.verbose:
+        OUT_STREAM.write("LOADED JSON DATA: %r\n" % data)
+    #construct POST
+    post_head = ["%s?" % (keys_info['inputUrl'],)]
+    post_params = ['private_key=%s' % keys_info['privateKey']]
+    for key, val in data.items():
+        post_params.append("&%s=%s" % (key,val))
+    post_url = "".join(post_head + post_params)
+    if args.verbose:
+        OUT_STREAM.write("POSTING: %s\n" % post_url)
+    #send POST
+    url_response = urllib2.urlopen(post_url)
+    if args.verbose:
+        OUT_STREAM.write("RESPONSE: %s\n" % url_response)
+
+except Exception, exc:
+    LOGFILE.write("ERROR: %s" % exc)
+finally:
+    LOGFILE.close()
+    IN_STREAM.close()

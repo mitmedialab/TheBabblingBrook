@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+"""  OPK push skeleton model code for Python.
+     Here are some test results:
+     $ echo '{"temperature":1.0,"conductivity":2.0,"depth":3.0}' | ./push_phant_json -v
+     LOADED JSON DATA: OrderedDict([(u'temperature', 1.0), (u'conductivity', 2.0), (u'depth', 3.0)])
+     POSTING: https://data.sparkfun.com/input/jqERJOgdYKuyw09Zm8xb?private_key=XXXXXXXXXXXXXXXXXXXX&temperature=1.0&conductivity=2.0&depth=3.0
+     RESPONSE: <addinfourl at 139956652527344 whose fp = <socket._fileobject object at 0x7f4a3371cf50>>
+"""
+import sys, os, argparse
+import json
+import requests
+
+
+LOGFILE     = sys.stderr
+IN_STREAM   = sys.stdin
+OUT_STREAM  = sys.stdout
+
+
+
+# parse the command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
+
+args = parser.parse_args()
+
+#-------------------------------------------------------------------------------
+
+# process the input
+try:
+    #decode into and ordered dictionary, assuming JSON document
+
+    for line in IN_STREAM:
+        a=line.split("\n")
+        value = a[0]
+    
+    #print value
+
+    babble_url = 'http://dev.websiteonline.website/saveSingleObservation'
+    data = {'current_observation': {'temp_f':value}}
+
+    headers = {'Content-type': 'application/json','Accept': 'text/plain'}
+    r = requests.post(babble_url, data = json.dumps(data), headers = headers)
+    print r
+
+
+
+    #if args.verbose:
+    #if args.verbose:
+    #send POST
+
+except Exception, exc:
+    LOGFILE.write("ERROR: %s" % exc)
+finally:
+    LOGFILE.close()
+    IN_STREAM.close()
