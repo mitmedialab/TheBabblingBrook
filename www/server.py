@@ -152,10 +152,21 @@ def datadump():
 		return "ERROR: Send me the variable 'listOfParams' with the names of variables of interest. If you need to see names of variables of interest check here: /saveWeatherData. Don't send current_observation.temp_f, just send temp_f"
 	else: 
 		theList = listOfParams.split(",")
-		firstThing = theList[0]
+		numItems = len(theList)
 
-		q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",1)])
-		
+		if numItems == 1:
+			firstThing = theList[0]
+			q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",1)])
+		else: 
+			query = []
+			fieldList = {}	
+			fieldList["current_observation.observation_time_rfc822"]=1
+			fieldList["current_observation.observation_epoch"]=1	
+			for item in theList:
+				query.append({item : {'$exists':'true'} })
+				fieldList[item]= 1
+
+			q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.observation_epoch",1)])
 		for row in q:
 			result.append(row)
 	return json.dumps(result, sort_keys=True, indent=4, default=json_util.default)
