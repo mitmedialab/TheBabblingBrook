@@ -8,6 +8,7 @@ from bson import json_util
 from flask import Flask,render_template,request
 from pymongo import MongoClient 
 from random import randint
+from datetime import datetime
 import json
 
 
@@ -41,8 +42,9 @@ def hello_world():
 def save_weather_data():
 	url = 'http://api.wunderground.com/api/' + config.get('api','wunderground_key') + '/conditions/q/MA/Plymouth.json'
 	response = requests.get(url)
-
-	app.db.weather_collection.insert(response.json())
+	data = response.json()
+	data["current_observation"]["datetime"] = datetime.now()
+	app.db.weather_collection.insert(data)
 	return response.content
 
 # Saves sensor data posted to the DB, make sure you send with Content-Type: json
@@ -51,6 +53,8 @@ def save_weather_data():
 def save_sensor_data():
 	content = request.get_json()
 	if content is not None:
+		content["current_observation"]["datetime"] = datetime.now()
+		print content
 		app.db.weather_collection.insert(content)
 		return "OK"
 	else:
@@ -154,37 +158,55 @@ def datadump():
 	else:
 		sort = int(sort)
 	if listOfParams is None:
-		return "ERROR: Send me the variable 'listOfParams' with the names of variables of interest. If you need to see names of variables of interest check here: /saveWeatherData. Don't send current_observation.temp_f, just send temp_f"
+		return "ERROR: Send me something like this: http://127.0.0.1:5000/dataDump?listOfParams=current_observation.temp_f,current_observation.temp_c&sort=1"
 	else: 
-		theList = listOfParams.split(",")
-		numItems = len(theList)
-
-		if numItems == 1:
-			firstThing = theList[0]
-			q = app.db.weather_collection.find({ firstThing : {"$exists":'true'} }, {firstThing:1, "current_observation.observation_time_rfc822":1, "current_observation.observation_epoch":1 }).sort([("current_observation.observation_epoch",sort)])
-		else: 
-			query = []
-			fieldList = {}	
-			fieldList["current_observation.observation_time_rfc822"]=1
-			fieldList["current_observation.observation_epoch"]=1	
-			for item in theList:
-				query.append({item : {'$exists':'true'} })
-				fieldList[item]= 1
-
-			print fieldList	
-			q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.observation_epoch",sort)])
-		for row in q:
-			result.append(row)
+		listOfParams = listOfParams.split(",")
+		result = getData(listOfParams, sort)
 	return json.dumps(result, sort_keys=True, indent=4, default=json_util.default)
 
-@app.route('/datavizGrid', methods=['GET', 'POST'])
+# pull out data we want to  see
+# format it for google
+# send to google
+# print response 
+# google charts and print out a grid of temp, conductivity etc over the last x period of time
+@app.route('/visualize', methods=['GET', 'POST'])
 def visualize():
-	# pull out data we want to  see
-	# format it for google
-	# send to google
-	# print response 
-	# google charts and print out a grid of temp, conductivity etc over the last x period of time
-	hi = "hi"
+	
+	data=[]
+	sort = request.args.get("sort")
+	if sort is None:
+		sort = -1
+	else:
+		sort = int(sort)
+	listOfParams = request.args.get("listOfParams")
+	if listOfParams is None:
+		return "ERROR: Send me some data in the listOfParams variable" 
+
+	listOfParams = listOfParams.split(",")
+	firstThing = listOfParams[0]
+	data = getData(listOfParams, sort)
+	title = firstThing.rsplit(".", 1)[1]
+
+	return render_template('chart.html', title=title, data=json.dumps(data, sort_keys=True, indent=None, default=json_util.default))
+
+#accepts a list of parameters and then retrieves all records that have those parameters in the DB
+def getData(listOfParams, sort):
+	result=[]
+
+	query = []
+	query.append({"current_observation.datetime" : {'$exists':'true'} })
+	fieldList = {}	
+	fieldList["current_observation.datetime"]=1
+	
+	for item in listOfParams:
+		query.append({item : {'$exists':'true'} })
+		fieldList[item]= 1
+
+	print fieldList	
+	q = app.db.weather_collection.find({'$and': query}, fieldList).sort([("current_observation.datetime",sort)])
+	for row in q:
+		result.append(row)
+	return result
 
 if __name__ == '__main__':
     app.run()
