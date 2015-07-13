@@ -26,7 +26,13 @@ config.read(os.path.join(BASE_DIR,CONFIG_FILENAME))
 
 # MongoDB & links to each collection
 #uri = "mongodb://"+ config.get('db','user')+ ":"+ config.get('db','pass')+"@" +config.get('db','host') + ":" + config.get('db','port')+"/?authSource="+config.get('db','auth_db')
-uri = "mongodb://"+config.get('db','host')+":"+ config.get('db','port')
+
+#LOCAL DEVELOPMENT
+#uri = "mongodb://"+config.get('db','host')+":"+ config.get('db','port')
+
+#CLOUD9 DEVELOPMENT
+uri = "mongodb://"+ os.environ["IP"] +":"+ config.get('db','port')
+
 db_client = MongoClient(uri)
 app.db = db_client[config.get('db','name')]
 app.db_weather_collection = app.db[config.get('db','weather_collection')]
@@ -209,7 +215,7 @@ def getData(listOfParams, sort):
 	return result
 
 if __name__ == '__main__':
-    app.run()
+    app.run( host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 8080)) )
 
 
 

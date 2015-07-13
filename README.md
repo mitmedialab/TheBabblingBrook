@@ -8,6 +8,7 @@ PYTHON Libraries
 * requests
 * Flask
 * PyMongo
+* ConfigParser
 
 
 APIS
