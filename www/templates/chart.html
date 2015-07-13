@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript"
+          src="https://www.google.com/jsapi?autoload={
+            'modules':[{
+              'name':'visualization',
+              'version':'1',
+              'packages':['corechart']
+            }]
+          }"></script>
+
+    <script type="text/javascript">
+      var title = "{{title | safe}}";
+      var theData = $.parseJSON('{{data | safe}}');
+     
+      google.setOnLoadCallback(drawChart);
+
+      
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+       
+        data.addColumn('datetime', 'Date');
+        data.addColumn('number', title);
+       
+        
+        $.each(theData, function (i, row) {
+          //console.log(i)
+          theDateTime = new Date(row.current_observation.datetime['$date']);
+          console.log(row.current_observation.datetime['$date'])
+          console.log(row.current_observation.temp_f)
+          data.addRow([
+            (theDateTime),
+            parseFloat(row.current_observation.temp_f)
+          ]);
+        });
+        
+        /*var data = google.visualization.arrayToDataTable([
+          ['Date', title],
+          ['2004',  1000],
+          ['2005',  1170],
+          ['2006',  660],
+          ['2007',  1030]
+        ]);*/
+
+        var options = {
+          title: title,
+          curveType: 'function',
+          pointSize: 3,
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>{{title}} Chart</h1>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+   
+  </body>
+</html>
