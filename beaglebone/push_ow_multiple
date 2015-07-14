@@ -9,6 +9,7 @@
 import sys, os, argparse
 import json
 import requests
+import random
 
 import time
 
@@ -16,7 +17,7 @@ LOGFILE     = sys.stderr
 IN_STREAM   = sys.stdin
 OUT_STREAM  = sys.stdout
 
-
+numObservations=5
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
@@ -33,19 +34,49 @@ try:
     for line in IN_STREAM:
         a=line.split("\n")
         value = a[0]
+
+
+    device=5
     
     #print value
- 
-    conductivityRaw=30
+    # the temp
+    t = 30
 
+    # the conductivity
+    s= 20
+
+    # the epoch 
     epoch_time = int(time.time())
 
     #babble_url = 'http://dev.websiteonline.website/saveSingleObservation'
     
-    babble_url = 'https://hydro-server-dwblair.c9.io/saveSingleObservation'
+    #babble_url = 'https://hydro-server-dwblair.c9.io/saveSingleObservation'
+    babble_url = 'https://hydro-server-dwblair.c9.io/saveMultipleObservations'
 
-    data = {'device_id': 3, 'unix_epoch':epoch_time, 'temp_c': value, 'conductivity_raw':conductivityRaw}  
+    r=random.random()
+    
+    print r
 
+    data=[]
+
+    for i in range (numObservations):
+
+
+        t=t+random.random()
+        s=s+random.random()
+        epoch_time=epoch_time+60 #add a minute
+
+        data.append({'device_id':device, 'unix_epoch':epoch_time, 'temp_c':t, 'conductivity_raw':s})
+    
+    #json_string = json.dumps([ob._dict_ for ob in data])
+
+    print data 
+
+    #print json.dumps(data)
+    
+    #data = [{'device_id': 3, 'unix_epoch':epoch_time, 'temp_c': value, 'conductivity_raw':conductivityRaw}]
+
+    #print data
 
     headers = {'Content-type': 'application/json','Accept': 'text/plain'}
     r = requests.post(babble_url, data = json.dumps(data), headers = headers)
